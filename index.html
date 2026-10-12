@@ -97,8 +97,8 @@ const app=document.getElementById("app");
 const toast=m=>{const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2800)};
 const u8=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
 async function save(name,data){let d=null;try{d=await window.claude?.use("downloads")}catch(e){}
- if(!d)return toast("Downloads aren't available in this view");
- try{await d.save({filename:name,data});toast("Saved! Rename .zip to .mcpack, then open it with Minecraft")}catch(e){if(e&&e.code!=="declined")toast("Couldn't save the file")}}
+ if(d){try{await d.save({filename:name,data});toast("Saved! Rename .zip to .mcpack, then open it with Minecraft");return}catch(e){if(e&&e.code==="declined")return}}
+ try{const b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);toast("Downloading... rename .zip to .mcpack, then open it with Minecraft")}catch(e){toast("Couldn't save the file")}}
 function go(html,after){const v=app.firstElementChild;const r=()=>{app.innerHTML=`<div class="view">${html}</div>`;after&&after();window.scrollTo(0,0)};if(v){v.classList.add("out");setTimeout(r,280)}else r()}
 const L=(c="")=>`<img class="logo ${c}" src="${LOGO}" alt="OS CLIENT logo">`;
 const $=s=>app.querySelector(s),$$=(s,f)=>app.querySelectorAll(s).forEach(f);
